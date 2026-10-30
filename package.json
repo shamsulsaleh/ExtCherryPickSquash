@@ -1,0 +1,209 @@
+{
+  "name": "gitcherrypick",
+  "displayName": "Git Cherry-Pick & Squash",
+  "icon": "images/icon.png",
+  "description": "Cherry-pick or squash selected commits into any branch from the Source Control panel, with conflict continue/skip/abort support.",
+  "version": "0.0.1",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "main": "./out/extension.js",
+  "extensionDependencies": [
+    "vscode.git"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "test": "npm run compile && mocha out/test/**/*.test.js --timeout 30000"
+  },
+  "categories": [
+    "Other"
+  ],
+  "contributes": {
+    "views": {
+      "scm": [
+        {
+          "id": "gitCherryPick.commitsView",
+          "name": "Cherry-Pick: Commits"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "gitCherryPick.cherryPickSelected",
+        "title": "Cherry-Pick to Branch...",
+        "category": "Cherry-Pick"
+      },
+      {
+        "command": "gitCherryPick.squashSelected",
+        "title": "Squash to Branch...",
+        "category": "Cherry-Pick"
+      },
+      {
+        "command": "gitCherryPick.pickCommits",
+        "title": "Pick Commits to Cherry-Pick...",
+        "category": "Cherry-Pick",
+        "icon": "$(list-selection)"
+      },
+      {
+        "command": "gitCherryPick.refresh",
+        "title": "Refresh",
+        "category": "Cherry-Pick",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "gitCherryPick.switchBranch",
+        "title": "Switch Viewed Branch...",
+        "category": "Cherry-Pick",
+        "icon": "$(git-branch)"
+      },
+      {
+        "command": "gitCherryPick.switchRepository",
+        "title": "Switch Repository...",
+        "category": "Cherry-Pick",
+        "icon": "$(repo)"
+      },
+      {
+        "command": "gitCherryPick.copyHash",
+        "title": "Copy Commit Hash",
+        "category": "Cherry-Pick"
+      },
+      {
+        "command": "gitCherryPick.continue",
+        "title": "Continue",
+        "category": "Cherry-Pick",
+        "icon": "$(debug-continue)"
+      },
+      {
+        "command": "gitCherryPick.skip",
+        "title": "Skip",
+        "category": "Cherry-Pick",
+        "icon": "$(debug-step-over)"
+      },
+      {
+        "command": "gitCherryPick.abort",
+        "title": "Abort",
+        "category": "Cherry-Pick",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "gitCherryPick.showActions",
+        "title": "Show Cherry-Pick Actions",
+        "category": "Cherry-Pick"
+      }
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "gitCherryPick.cherryPickSelected",
+          "when": "view == gitCherryPick.commitsView && viewItem == commit",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gitCherryPick.squashSelected",
+          "when": "view == gitCherryPick.commitsView && viewItem == commit",
+          "group": "navigation@2"
+        },
+        {
+          "command": "gitCherryPick.copyHash",
+          "when": "view == gitCherryPick.commitsView && viewItem == commit",
+          "group": "9_copy"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "gitCherryPick.refresh",
+          "when": "view == gitCherryPick.commitsView",
+          "group": "navigation"
+        },
+        {
+          "command": "gitCherryPick.switchBranch",
+          "when": "view == gitCherryPick.commitsView",
+          "group": "navigation"
+        },
+        {
+          "command": "gitCherryPick.switchRepository",
+          "when": "view == gitCherryPick.commitsView",
+          "group": "navigation"
+        },
+        {
+          "command": "gitCherryPick.pickCommits",
+          "when": "view == gitCherryPick.commitsView",
+          "group": "navigation"
+        },
+        {
+          "command": "gitCherryPick.continue",
+          "when": "view == gitCherryPick.commitsView && gitCherryPick.state == paused",
+          "group": "navigation"
+        },
+        {
+          "command": "gitCherryPick.skip",
+          "when": "view == gitCherryPick.commitsView && gitCherryPick.state == paused",
+          "group": "navigation"
+        },
+        {
+          "command": "gitCherryPick.abort",
+          "when": "view == gitCherryPick.commitsView && gitCherryPick.state == paused",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "gitCherryPick.cherryPickSelected",
+          "when": "false"
+        },
+        {
+          "command": "gitCherryPick.squashSelected",
+          "when": "false"
+        },
+        {
+          "command": "gitCherryPick.copyHash",
+          "when": "false"
+        },
+        {
+          "command": "gitCherryPick.continue",
+          "when": "gitCherryPick.state == paused"
+        },
+        {
+          "command": "gitCherryPick.skip",
+          "when": "gitCherryPick.state == paused"
+        },
+        {
+          "command": "gitCherryPick.abort",
+          "when": "gitCherryPick.state == paused"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Git Cherry-Pick & Squash",
+      "properties": {
+        "gitCherryPick.maxCommits": {
+          "type": "number",
+          "default": 200,
+          "description": "Maximum number of commits to list in the Cherry-Pick view."
+        },
+        "gitCherryPick.appendCherryPickedFrom": {
+          "type": "boolean",
+          "default": false,
+          "description": "Add -x (append '(cherry picked from commit ...)' to the message) when cherry-picking."
+        },
+        "gitCherryPick.openConflictedFiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically open conflicted files in the editor when a cherry-pick conflicts."
+        }
+      }
+    }
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.19.43",
+    "@types/vscode": "~1.85.0",
+    "mocha": "^10.8.2",
+    "typescript": "5.6"
+  }
+}
