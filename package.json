@@ -1,10 +1,11 @@
 {
-  "name": "gitcherrypick",
+  "name": "git-cherry-pick-squash",
   "displayName": "Git Cherry-Pick & Squash",
   "icon": "images/icon.png",
   "description": "Cherry-pick or squash selected commits into any branch from the Source Control panel, with conflict continue/skip/abort support.",
-  "version": "0.0.1",
-  "publisher": "local",
+  "version": "0.1.0",
+  "license": "MIT",
+  "publisher": "shamsulsaleh",
   "repository": {
     "type": "git",
     "url": "https://github.com/shamsulsaleh/ExtCherryPickSquash.git"
